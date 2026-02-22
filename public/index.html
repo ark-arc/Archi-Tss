@@ -3,155 +3,163 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Modern MP3 Player</title>
+  <title>MP3 Player</title>
   <style>
     :root{
-      --bg0:#070b15;
-      --bg1:#0b1220;
+      --bg: #0b1220;
       --card: rgba(255,255,255,.06);
       --card2: rgba(255,255,255,.09);
-      --line: rgba(255,255,255,.12);
       --text: rgba(255,255,255,.92);
-      --muted: rgba(255,255,255,.62);
-      --shadow: 0 20px 70px rgba(0,0,0,.55);
-      --r: 18px;
-
-      --a: rgba(99,102,241,.65);
-      --b: rgba(16,185,129,.55);
-      --c: rgba(236,72,153,.45);
-      --warn: rgba(245,158,11,.85);
-      --ok: rgba(34,197,94,.85);
-      --bad: rgba(239,68,68,.9);
-
-      --focus: 0 0 0 4px rgba(99,102,241,.25);
+      --muted: rgba(255,255,255,.6);
+      --line: rgba(255,255,255,.12);
+      --shadow: 0 20px 60px rgba(0,0,0,.45);
+      --radius: 18px;
     }
 
-    *{ box-sizing:border-box; }
-    html, body{ height:100%; }
+    *{ box-sizing: border-box; }
     body{
       margin:0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      min-height:100vh;
       color: var(--text);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
       background:
-        radial-gradient(1200px 700px at 18% 12%, rgba(99,102,241,.35), transparent 60%),
-        radial-gradient(900px 600px at 84% 28%, rgba(16,185,129,.20), transparent 60%),
-        radial-gradient(1000px 700px at 54% 96%, rgba(236,72,153,.16), transparent 60%),
-        linear-gradient(180deg, var(--bg0), var(--bg1));
-      padding: 26px 14px 40px;
+        radial-gradient(1200px 700px at 20% 15%, rgba(99,102,241,.35), transparent 55%),
+        radial-gradient(900px 600px at 80% 30%, rgba(16,185,129,.22), transparent 55%),
+        radial-gradient(1000px 700px at 50% 95%, rgba(236,72,153,.18), transparent 55%),
+        var(--bg);
+      padding: 28px 14px 44px;
     }
 
-    .wrap{ max-width: 1160px; margin: 0 auto; }
+    .wrap{
+      max-width: 1100px;
+      margin: 0 auto;
+    }
 
     header{
-      display:flex; align-items:flex-end; justify-content:space-between; gap:14px;
-      margin-bottom: 14px;
+      display:flex;
+      gap:14px;
+      align-items:flex-end;
+      justify-content:space-between;
+      margin-bottom: 16px;
     }
-    .title{ display:flex; flex-direction:column; gap:6px; }
+
+    .title{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
     .title h1{
       margin:0;
-      font-size: clamp(22px, 3vw, 32px);
-      letter-spacing:.2px;
-      line-height:1.1;
+      font-size: clamp(22px, 3vw, 30px);
+      letter-spacing: .2px;
     }
-    .title p{ margin:0; color:var(--muted); font-size: 13px; line-height:1.35; }
+    .title p{
+      margin:0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+    }
 
-    .badgeRow{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:flex-end; }
     .badge{
-      display:inline-flex; gap:8px; align-items:center;
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
       padding: 8px 12px;
-      border:1px solid var(--line);
+      border: 1px solid var(--line);
       border-radius: 999px;
       background: rgba(255,255,255,.05);
       color: var(--muted);
       font-size: 12px;
       white-space: nowrap;
-      backdrop-filter: blur(10px);
     }
     .dot{
       width:8px; height:8px; border-radius:50%;
-      background: var(--ok);
-      box-shadow: 0 0 18px rgba(34,197,94,.5);
+      background: #22c55e;
+      box-shadow: 0 0 18px rgba(34,197,94,.55);
     }
 
     .grid{
       display:grid;
-      grid-template-columns: 1.2fr .8fr;
+      grid-template-columns: 1.15fr .85fr;
       gap: 14px;
     }
-    @media (max-width: 920px){
-      header{ flex-direction:column; align-items:flex-start; }
-      .badgeRow{ justify-content:flex-start; }
+    @media (max-width: 900px){
       .grid{ grid-template-columns: 1fr; }
+      header{ flex-direction:column; align-items:flex-start; }
     }
 
     .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.045));
       border: 1px solid var(--line);
-      border-radius: var(--r);
-      background: linear-gradient(180deg, rgba(255,255,255,.075), rgba(255,255,255,.04));
+      border-radius: var(--radius);
       box-shadow: var(--shadow);
       overflow:hidden;
-      position: relative;
     }
-    .card:before{
-      content:"";
-      position:absolute; inset:-2px;
-      background: radial-gradient(900px 260px at 20% 0%, rgba(99,102,241,.16), transparent 55%),
-                  radial-gradient(900px 260px at 80% 0%, rgba(16,185,129,.12), transparent 55%),
-                  radial-gradient(900px 260px at 50% 100%, rgba(236,72,153,.10), transparent 55%);
-      pointer-events:none;
-      opacity:.8;
-    }
-    .card > *{ position: relative; }
 
-    .head{
+    .card .head{
       padding: 16px 16px 12px;
       border-bottom: 1px solid var(--line);
       display:flex;
-      gap: 12px;
-      align-items: center;
-      justify-content: space-between;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
     }
+
     .now{
-      min-width:0;
       display:flex;
       flex-direction:column;
       gap:6px;
+      min-width: 0;
     }
-    .track{
-      font-weight:800;
+    .now .track{
+      font-weight: 700;
       font-size: 14px;
       overflow:hidden;
-      text-overflow:ellipsis;
-      white-space:nowrap;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
-    .sub{
-      display:flex;
-      gap: 10px;
-      flex-wrap:wrap;
-      align-items:center;
+    .now .sub{
       color: var(--muted);
       font-size: 12px;
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
     }
 
     .pill{
       display:inline-flex;
-      gap:8px; align-items:center;
+      gap:8px;
+      align-items:center;
       padding: 6px 10px;
-      border-radius:999px;
-      border:1px solid var(--line);
+      border-radius: 999px;
+      border: 1px solid var(--line);
       background: rgba(255,255,255,.04);
       color: var(--muted);
       font-size: 12px;
-      white-space:nowrap;
     }
-    .pill strong{ color: var(--text); font-weight:750; }
 
-    .controls{ padding: 14px 16px 16px; display:flex; flex-direction:column; gap: 12px; }
-
-    .row{
-      display:flex; align-items:center; justify-content:space-between; gap: 10px; flex-wrap:wrap;
+    .controls{
+      padding: 14px 16px 16px;
+      display:flex;
+      flex-direction:column;
+      gap: 12px;
     }
-    .btns{ display:flex; gap: 10px; flex-wrap:wrap; align-items:center; }
+
+    .btnrow{
+      display:flex;
+      gap: 10px;
+      align-items:center;
+      flex-wrap:wrap;
+      justify-content:space-between;
+    }
+
+    .btns{
+      display:flex;
+      gap: 10px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
 
     button{
       appearance:none;
@@ -161,192 +169,182 @@
       border-radius: 14px;
       padding: 10px 12px;
       cursor:pointer;
-      transition: transform .06s ease, background .15s ease, border-color .15s ease, box-shadow .15s ease;
+      transition: transform .05s ease, background .15s ease, border-color .15s ease;
       display:inline-flex;
       gap:10px;
       align-items:center;
-      font-weight: 750;
+      font-weight: 650;
       font-size: 13px;
       letter-spacing:.1px;
-      user-select:none;
     }
-    button:hover{ background: rgba(255,255,255,.09); border-color: rgba(255,255,255,.2); }
+    button:hover{
+      background: rgba(255,255,255,.09);
+      border-color: rgba(255,255,255,.18);
+    }
     button:active{ transform: translateY(1px); }
-    button:focus{ outline:none; box-shadow: var(--focus); }
-    button:disabled{ opacity:.5; cursor:not-allowed; }
+    button:disabled{
+      opacity:.5;
+      cursor:not-allowed;
+    }
 
     .primary{
-      background: rgba(99,102,241,.24);
-      border-color: rgba(99,102,241,.42);
+      background: rgba(99,102,241,.22);
+      border-color: rgba(99,102,241,.35);
     }
     .primary:hover{
-      background: rgba(99,102,241,.30);
-      border-color: rgba(99,102,241,.55);
+      background: rgba(99,102,241,.28);
+      border-color: rgba(99,102,241,.45);
     }
 
-    .toggleOn{
-      background: rgba(16,185,129,.18);
-      border-color: rgba(16,185,129,.35);
-    }
-    .toggleOn:hover{
-      background: rgba(16,185,129,.24);
-      border-color: rgba(16,185,129,.45);
+    .icon{
+      width: 16px;
+      height: 16px;
+      display:inline-block;
     }
 
-    .icon{ width:16px; height:16px; display:inline-block; }
+    .seek{
+      display:flex;
+      flex-direction:column;
+      gap: 8px;
+    }
 
-    .seek{ display:flex; flex-direction:column; gap: 8px; }
-    input[type="range"]{ width:100%; accent-color: #818cf8; }
+    input[type="range"]{
+      width:100%;
+      accent-color: #818cf8;
+    }
+
     .time{
-      display:flex; align-items:center; justify-content:space-between;
-      color: var(--muted); font-size: 12px; gap: 10px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      color: var(--muted);
+      font-size: 12px;
+      gap: 10px;
     }
 
-    .mix{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
+    .vol{
+      display:flex;
       gap: 10px;
       align-items:center;
+      justify-content:flex-end;
+      color: var(--muted);
+      font-size: 12px;
     }
-    @media (max-width: 560px){ .mix{ grid-template-columns:1fr; } }
-    .field{
-      display:flex; gap: 10px; align-items:center; justify-content:space-between;
-      padding: 10px 12px;
-      border-radius: 14px;
-      border: 1px solid var(--line);
-      background: rgba(255,255,255,.05);
-    }
-    .field label{ color: var(--muted); font-size: 12px; }
-    .field input[type="text"], .field input[type="password"], .field input[type="url"]{
-      width:100%;
-      border:none; outline:none;
-      background:transparent;
-      color: var(--text);
-      font-size: 13px;
-    }
-    .field input::placeholder{ color: rgba(255,255,255,.45); }
+    .vol input{ width: 160px; }
+    @media (max-width: 520px){ .vol input{ width: 120px; } }
 
-    .visual{
-      margin-top: 10px;
-      border-top: 1px solid var(--line);
-      padding: 12px 16px 16px;
-    }
-    canvas{
-      width:100%;
-      height: 70px;
-      display:block;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,.08);
-      background: rgba(255,255,255,.03);
+    .side{
+      display:flex;
+      flex-direction:column;
+      min-height: 420px;
     }
 
-    /* Playlist side */
-    .side{ display:flex; flex-direction:column; min-height: 460px; }
     .toolbar{
       padding: 14px 16px 12px;
       border-bottom: 1px solid var(--line);
-      display:flex; gap:10px; align-items:center; justify-content:space-between; flex-wrap:wrap;
+      display:flex;
+      gap:10px;
+      align-items:center;
+      justify-content:space-between;
+      flex-wrap:wrap;
     }
+
     .search{
-      flex:1; min-width: 180px;
-      display:flex; gap:10px; align-items:center;
+      flex: 1;
+      min-width: 160px;
+      display:flex;
+      gap: 10px;
+      align-items:center;
       padding: 10px 12px;
       border-radius: 14px;
       background: rgba(255,255,255,.05);
       border: 1px solid var(--line);
     }
+
     .search input{
       width:100%;
-      border:none; outline:none;
+      border:none;
+      outline:none;
       background:transparent;
       color: var(--text);
       font-size: 13px;
     }
     .search input::placeholder{ color: rgba(255,255,255,.45); }
 
-    .list{ padding: 10px; overflow:auto; max-height: 560px; }
-    @media (max-width: 920px){ .list{ max-height: 420px; } }
+    .list{
+      padding: 10px;
+      overflow:auto;
+      max-height: 520px;
+    }
+    @media (max-width: 900px){ .list{ max-height: 420px; } }
 
     .item{
-      display:flex; align-items:center; gap: 12px;
+      display:flex;
+      align-items:center;
+      gap: 12px;
       padding: 12px 12px;
       border-radius: 14px;
       border: 1px solid transparent;
       cursor:pointer;
       user-select:none;
-      transition: background .12s ease, border-color .12s ease, transform .06s ease;
+      transition: background .12s ease, border-color .12s ease;
     }
-    .item:hover{ background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.10); }
-    .item:active{ transform: translateY(1px); }
+    .item:hover{
+      background: rgba(255,255,255,.06);
+      border-color: rgba(255,255,255,.10);
+    }
     .item.active{
       background: rgba(99,102,241,.18);
       border-color: rgba(99,102,241,.32);
     }
+
     .num{
-      width: 28px; height: 28px;
+      width: 28px;
+      height: 28px;
       border-radius: 12px;
-      display:grid; place-items:center;
+      display:grid;
+      place-items:center;
       background: rgba(255,255,255,.06);
       border: 1px solid var(--line);
-      color: rgba(255,255,255,.85);
-      font-weight: 850;
+      color: rgba(255,255,255,.8);
+      font-weight: 700;
       font-size: 12px;
       flex: 0 0 auto;
     }
-    .meta{ min-width:0; flex:1; display:flex; flex-direction:column; gap:4px; }
-    .meta .t{
-      font-weight: 850; font-size: 13px;
-      overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
-    }
-    .meta .m{ color: var(--muted); font-size: 12px; display:flex; gap: 10px; flex-wrap:wrap; }
-    .empty{ padding: 22px 12px; color: var(--muted); text-align:center; }
 
-    /* Toast */
-    .toast{
-      position: fixed;
-      right: 14px;
-      bottom: 14px;
+    .meta{
+      min-width:0;
+      flex:1;
       display:flex;
       flex-direction:column;
-      gap:10px;
-      z-index: 50;
-      max-width: min(420px, calc(100vw - 28px));
+      gap:4px;
     }
-    .titem{
-      border:1px solid var(--line);
-      background: rgba(10, 14, 28, .72);
-      backdrop-filter: blur(10px);
-      border-radius: 16px;
-      padding: 10px 12px;
-      box-shadow: 0 18px 50px rgba(0,0,0,.45);
+    .meta .t{
+      font-weight: 700;
+      font-size: 13px;
+      overflow:hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .meta .m{
+      color: var(--muted);
+      font-size: 12px;
       display:flex;
-      gap:10px;
-      align-items:flex-start;
-      animation: pop .18s ease-out;
+      gap: 10px;
+      flex-wrap:wrap;
     }
-    @keyframes pop{ from{ transform: translateY(6px); opacity:.0 } to{ transform:none; opacity:1 } }
-    .tbadge{
-      width: 10px; height:10px; border-radius:999px; margin-top: 4px; flex: 0 0 auto;
+
+    .empty{
+      padding: 22px 12px;
+      color: var(--muted);
+      text-align:center;
     }
-    .ttext{ flex:1; min-width:0; }
-    .ttext strong{ display:block; font-size: 12px; }
-    .ttext span{ display:block; color: var(--muted); font-size: 12px; margin-top:2px; }
-    .close{
-      border:none; background:transparent; color: rgba(255,255,255,.65);
-      cursor:pointer; padding: 2px 6px; border-radius: 10px;
-    }
-    .close:hover{ background: rgba(255,255,255,.08); }
+
     footer{
       margin-top: 14px;
       color: rgba(255,255,255,.5);
       font-size: 12px;
       text-align:center;
-    }
-    code{
-      padding: 2px 6px;
-      border-radius: 8px;
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.10);
     }
   </style>
 </head>
@@ -354,16 +352,10 @@
 <div class="wrap">
   <header>
     <div class="title">
-      <h1>Modern MP3 Player</h1>
-      <p>
-        Playlist diambil dari API <code>/api/playlist</code>. MP3 dimainkan dari URL yang dikasih API.
-        <span style="opacity:.85">Shortcut: Space (Play/Pause), ←/→ (Seek), ↑/↓ (Volume).</span>
-      </p>
+      <h1>MP3 Player</h1>
+      <p>Playlist diambil dari <code>/playlist.json</code>. File lagu diserve dari <code>/music/</code>.</p>
     </div>
-    <div class="badgeRow">
-      <div class="badge"><span class="dot" id="dot"></span><span id="conn">Connecting…</span></div>
-      <div class="badge">Mode: <strong id="mode" style="color:var(--text)">API</strong></div>
-    </div>
+    <div class="badge"><span class="dot"></span> Ready • Static Web</div>
   </header>
 
   <div class="grid">
@@ -375,49 +367,37 @@
           <div class="sub">
             <span class="pill" id="nowIndex">—</span>
             <span class="pill" id="nowStatus">Paused</span>
-            <span class="pill"><span style="opacity:.75">Shuffle</span> <strong id="shufP">Off</strong></span>
-            <span class="pill"><span style="opacity:.75">Repeat</span> <strong id="repP">Off</strong></span>
           </div>
         </div>
         <div class="pill" id="durPill">00:00</div>
       </div>
 
       <div class="controls">
-        <div class="row">
+        <div class="btnrow">
           <div class="btns">
-            <button id="btnPrev" title="Prev (J)">
+            <button id="btnPrev" title="Prev">
               <svg class="icon" viewBox="0 0 24 24" fill="none"><path d="M6 6v12M18 6l-8.5 6L18 18V6Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
               Prev
             </button>
 
-            <button id="btnPlay" class="primary" title="Play (Space)">
+            <button id="btnPlay" class="primary" title="Play">
               <svg class="icon" viewBox="0 0 24 24" fill="none"><path d="M8 5v14l11-7L8 5Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
               Play
             </button>
 
-            <button id="btnPause" title="Pause (Space)">
+            <button id="btnPause" title="Pause">
               <svg class="icon" viewBox="0 0 24 24" fill="none"><path d="M7 5v14M17 5v14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
               Pause
             </button>
 
-            <button id="btnNext" title="Next (K)">
+            <button id="btnNext" title="Next">
               <svg class="icon" viewBox="0 0 24 24" fill="none"><path d="M18 6v12M6 6l8.5 6L6 18V6Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
               Next
             </button>
-
-            <button id="btnShuffle" title="Shuffle">
-              <svg class="icon" viewBox="0 0 24 24" fill="none"><path d="M16 3h5v5M4 20l7-7M4 4l7 7M21 16v5h-5M14 14l7 7M14 10l7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              Shuffle
-            </button>
-
-            <button id="btnRepeat" title="Repeat">
-              <svg class="icon" viewBox="0 0 24 24" fill="none"><path d="M17 2l4 4-4 4M3 11V9a4 4 0 014-4h14M7 22l-4-4 4-4M21 13v2a4 4 0 01-4 4H3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              Repeat
-            </button>
           </div>
 
-          <div class="pill" style="display:flex; align-items:center; gap:10px;">
-            <span style="opacity:.8">Volume</span>
+          <div class="vol">
+            <span>Volume</span>
             <input id="vol" type="range" min="0" max="1" step="0.01" value="1" />
           </div>
         </div>
@@ -426,46 +406,11 @@
           <input id="seek" type="range" min="0" max="1000" value="0" />
           <div class="time">
             <span id="time">00:00 / 00:00</span>
-            <span id="hint">Loading…</span>
+            <span id="hint">Tap lagu untuk mulai</span>
           </div>
         </div>
 
-        <!-- Config -->
-        <div class="mix">
-          <div class="field" title="Base URL API (contoh: https://api-kamu.com)">
-            <label>API Base</label>
-            <input id="apiBase" type="url" placeholder="https://api-kamu.com" />
-          </div>
-
-          <div class="field" title="Opsional: untuk upload dari UI. Kalau kosong, upload UI nonaktif.">
-            <label>API Key</label>
-            <input id="apiKey" type="password" placeholder="(optional)" />
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="btns">
-            <button id="btnReload" title="Reload playlist">
-              <svg class="icon" viewBox="0 0 24 24" fill="none"><path d="M21 12a9 9 0 10-3 6.7M21 12v-7m0 7h-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              Reload
-            </button>
-
-            <button id="btnUpload" title="Upload MP3 via API (butuh API Key)">
-              <svg class="icon" viewBox="0 0 24 24" fill="none"><path d="M12 16V4m0 0l-4 4m4-4l4 4M4 20h16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              Upload
-            </button>
-
-            <input id="filePick" type="file" accept="audio/mpeg,audio/mp3,.mp3" style="display:none" />
-          </div>
-
-          <div class="pill" id="count">0 lagu</div>
-        </div>
-
-        <audio id="audio" preload="metadata" crossorigin="anonymous"></audio>
-
-        <div class="visual">
-          <canvas id="viz" width="900" height="140" aria-label="Visualizer"></canvas>
-        </div>
+        <audio id="audio" preload="metadata"></audio>
       </div>
     </section>
 
@@ -476,34 +421,19 @@
           <svg class="icon" viewBox="0 0 24 24" fill="none"><path d="M21 21l-4.3-4.3m1.8-5.2a7 7 0 11-14 0 7 7 0 0114 0Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
           <input id="q" placeholder="Cari judul..." />
         </div>
-        <button id="btnSort" title="Sort A→Z / Z→A" style="padding:10px 12px;">
-          <svg class="icon" viewBox="0 0 24 24" fill="none"><path d="M8 6h13M8 12h9M8 18h5M3 6v12m0 0l2-2m-2 2l-2-2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          Sort
-        </button>
+        <span class="pill" id="count">0 lagu</span>
       </div>
 
       <div class="list" id="list">
-        <div class="empty">Loading playlist…</div>
+        <div class="empty">Loading playlist...</div>
       </div>
     </aside>
   </div>
 
-  <footer>
-    Tips: kalau audio tidak bisa play, cek CORS di API dan pastikan URL MP3 bisa diakses publik.
-  </footer>
+  <footer>Tip: kalau kamu update lewat CLI, Vercel akan redeploy dan playlist otomatis ikut berubah.</footer>
 </div>
 
-<div class="toast" id="toast"></div>
-
 <script>
-  // ========= CONFIG =========
-  // Default API base. Bisa kamu hardcode langsung.
-  const DEFAULT_API_BASE = ""; // contoh: "https://api-kamu.com"
-  // Endpoint yang dipakai:
-  // GET  {API_BASE}/api/playlist
-  // POST {API_BASE}/api/upload (opsional) field: file, title | header: x-api-key
-
-  // ========= DOM =========
   const audio = document.getElementById("audio");
   const seek = document.getElementById("seek");
   const vol  = document.getElementById("vol");
@@ -512,12 +442,6 @@
   const btnPlay  = document.getElementById("btnPlay");
   const btnPause = document.getElementById("btnPause");
   const btnNext  = document.getElementById("btnNext");
-  const btnShuffle = document.getElementById("btnShuffle");
-  const btnRepeat  = document.getElementById("btnRepeat");
-  const btnReload  = document.getElementById("btnReload");
-  const btnUpload  = document.getElementById("btnUpload");
-  const btnSort    = document.getElementById("btnSort");
-  const filePick   = document.getElementById("filePick");
 
   const listEl = document.getElementById("list");
   const qEl = document.getElementById("q");
@@ -530,51 +454,9 @@
   const hint = document.getElementById("hint");
   const count = document.getElementById("count");
 
-  const apiBaseEl = document.getElementById("apiBase");
-  const apiKeyEl  = document.getElementById("apiKey");
-
-  const connEl = document.getElementById("conn");
-  const dotEl = document.getElementById("dot");
-  const shufP = document.getElementById("shufP");
-  const repP  = document.getElementById("repP");
-
-  const toastEl = document.getElementById("toast");
-
-  // ========= STATE =========
   let playlist = [];
   let filtered = [];
   let idx = -1;
-
-  let isShuffle = false;
-  let isRepeat = false;
-  let sortAsc = true;
-
-  // ========= UTILS =========
-  function toast(title, msg, type="ok"){
-    const el = document.createElement("div");
-    el.className = "titem";
-    const badge = document.createElement("div");
-    badge.className = "tbadge";
-    badge.style.background = type==="ok" ? "var(--ok)" : type==="warn" ? "var(--warn)" : "var(--bad)";
-    const t = document.createElement("div");
-    t.className = "ttext";
-    t.innerHTML = `<strong>${escapeHtml(title)}</strong><span>${escapeHtml(msg)}</span>`;
-    const close = document.createElement("button");
-    close.className = "close";
-    close.textContent = "✕";
-    close.onclick = () => el.remove();
-    el.appendChild(badge);
-    el.appendChild(t);
-    el.appendChild(close);
-    toastEl.appendChild(el);
-    setTimeout(() => { if (el.isConnected) el.remove(); }, 3400);
-  }
-
-  function escapeHtml(s){
-    return String(s ?? "").replace(/[&<>"']/g, (c) => ({
-      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
-    }[c]));
-  }
 
   function fmt(sec){
     if (!isFinite(sec)) return "00:00";
@@ -584,45 +466,22 @@
     return `${m}:${s}`;
   }
 
-  function setStatus(text){ nowStatus.textContent = text; }
-
-  function getApiBase(){
-    const v = (apiBaseEl.value || DEFAULT_API_BASE || "").trim();
-    return v.replace(/\/+$/,""); // remove trailing /
+  function setStatus(text){
+    nowStatus.textContent = text;
   }
 
-  function setConn(ok, text){
-    connEl.textContent = text;
-    dotEl.style.background = ok ? "var(--ok)" : "var(--bad)";
-    dotEl.style.boxShadow = ok ? "0 0 18px rgba(34,197,94,.5)" : "0 0 18px rgba(239,68,68,.5)";
-  }
-
-  function updateTogglesUI(){
-    shufP.textContent = isShuffle ? "On" : "Off";
-    repP.textContent  = isRepeat  ? "On" : "Off";
-    btnShuffle.classList.toggle("toggleOn", isShuffle);
-    btnRepeat.classList.toggle("toggleOn", isRepeat);
-  }
-
-  function clampIndex(i, len){
-    if (!len) return -1;
-    return (i + len) % len;
-  }
-
-  // ========= RENDER =========
   function updateHeader(){
-    if (!filtered.length || idx < 0){
-      nowTitle.textContent = filtered.length ? "Pilih lagu…" : "Playlist kosong";
+    if (!filtered.length){
+      nowTitle.textContent = "Playlist kosong";
       nowIndex.textContent = "—";
       durPill.textContent = "00:00";
       setStatus("Paused");
-      btnPlay.disabled = !filtered.length;
-      btnPause.disabled = !filtered.length;
-      btnPrev.disabled = !filtered.length;
-      btnNext.disabled = !filtered.length;
+      btnPlay.disabled = true;
+      btnPause.disabled = true;
+      btnPrev.disabled = true;
+      btnNext.disabled = true;
       return;
     }
-
     btnPlay.disabled = false;
     btnPause.disabled = false;
     btnPrev.disabled = false;
@@ -645,7 +504,10 @@
     filtered.forEach((t, i) => {
       const div = document.createElement("div");
       div.className = "item" + (i === idx ? " active" : "");
-      div.onclick = () => { setTrack(i); audio.play().catch(()=>{}); };
+      div.onclick = () => {
+        setTrack(i);
+        audio.play();
+      };
 
       const num = document.createElement("div");
       num.className = "num";
@@ -661,7 +523,7 @@
       const m = document.createElement("div");
       m.className = "m";
       const url = document.createElement("span");
-      url.textContent = (t.url || "").replace(/^https?:\/\//,"").slice(0,48) + ((t.url||"").length>48 ? "…" : "");
+      url.textContent = t.url || "-";
       m.appendChild(url);
 
       meta.appendChild(title);
@@ -673,62 +535,22 @@
     });
   }
 
-  // ========= PLAYER =========
   function setTrack(i){
     if (!filtered.length) return;
-
-    idx = clampIndex(i, filtered.length);
+    idx = (i + filtered.length) % filtered.length;
     const t = filtered[idx];
-
     audio.src = t.url;
     audio.load();
-
-    hint.textContent = "Playing…";
+    hint.textContent = "Playing...";
     setStatus("Loading");
     updateHeader();
     render();
   }
 
-  function nextTrack(){
-    if (!filtered.length) return;
-
-    if (isRepeat){
-      audio.currentTime = 0;
-      audio.play().catch(()=>{});
-      return;
-    }
-
-    if (isShuffle){
-      const next = Math.floor(Math.random() * filtered.length);
-      setTrack(next);
-      audio.play().catch(()=>{});
-      return;
-    }
-
-    setTrack(idx + 1);
-    audio.play().catch(()=>{});
-  }
-
-  function prevTrack(){
-    if (!filtered.length) return;
-    setTrack(idx - 1);
-    audio.play().catch(()=>{});
-  }
-
-  // ========= FILTER / SORT =========
   function applyFilter(){
     const q = (qEl.value || "").trim().toLowerCase();
-    let arr = [...playlist];
-
-    // sort by title
-    arr.sort((a,b) => {
-      const A = (a.title||"").toLowerCase();
-      const B = (b.title||"").toLowerCase();
-      return sortAsc ? A.localeCompare(B) : B.localeCompare(A);
-    });
-
-    if (q) arr = arr.filter(t => (t.title || "").toLowerCase().includes(q));
-    filtered = arr;
+    if (!q) filtered = [...playlist];
+    else filtered = playlist.filter(t => (t.title || "").toLowerCase().includes(q));
 
     if (!filtered.length){
       idx = -1;
@@ -740,109 +562,64 @@
       return;
     }
 
+    // kalau sebelumnya ada track terpilih, coba pertahankan
     if (idx < 0) idx = 0;
-    if (idx >= filtered.length) idx = 0;
+    else if (idx >= filtered.length) idx = 0;
 
+    // kalau audio belum ada source, set track
     if (!audio.src) setTrack(idx);
-    else { updateHeader(); render(); }
+    else {
+      updateHeader();
+      render();
+    }
   }
 
-  // ========= API =========
   async function loadPlaylist(){
-    const base = getApiBase();
-    if (!base){
-      setConn(false, "Set API Base dulu");
-      listEl.innerHTML = `<div class="empty">Isi <code>API Base</code> dulu. Contoh: <code>https://api-kamu.com</code></div>`;
-      return;
-    }
-
     try{
-      setConn(true, "Fetching…");
-      hint.textContent = "Loading playlist…";
+      const res = await fetch("/playlist.json", { cache: "no-store" });
+      if (!res.ok) throw new Error("Gagal fetch playlist.json");
+      playlist = await res.json();
 
-      const res = await fetch(`${base}/api/playlist`, { cache: "no-store" });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-
-      const data = await res.json();
-
-      playlist = Array.isArray(data) ? data.map(x => ({
+      // normalize minimal
+      playlist = Array.isArray(playlist) ? playlist.map(x => ({
         title: x.title ?? "Untitled",
         url: x.url ?? "",
       })).filter(x => x.url) : [];
 
       applyFilter();
-
-      setConn(true, "Connected");
-      toast("Playlist", `Loaded ${playlist.length} lagu`, "ok");
-      hint.textContent = playlist.length ? "Tap Play / klik lagu" : "Playlist kosong";
-    }catch(e){
-      console.error(e);
-      setConn(false, "Offline / Error");
-      toast("Gagal", "Tidak bisa fetch playlist dari API. Cek CORS & URL.", "bad");
-      listEl.innerHTML = `<div class="empty">Gagal load playlist. Pastikan endpoint <code>/api/playlist</code> bisa diakses & CORS mengizinkan domain web kamu.</div>`;
-      hint.textContent = "Error";
-    }
-  }
-
-  async function uploadFromUI(file){
-    const base = getApiBase();
-    const key  = (apiKeyEl.value || "").trim();
-    if (!base) return toast("Upload", "API Base belum diisi.", "warn");
-    if (!key) return toast("Upload", "API Key kosong. Isi dulu kalau mau upload dari UI.", "warn");
-
-    const fd = new FormData();
-    fd.append("file", file);
-    fd.append("title", file.name.replace(/\.(mp3|mpeg)$/i,""));
-
-    try{
-      toast("Upload", "Uploading…", "ok");
-      const res = await fetch(`${base}/api/upload`, {
-        method: "POST",
-        headers: { "x-api-key": key },
-        body: fd
-      });
-      if (!res.ok){
-        const t = await res.text().catch(()=> "");
-        throw new Error(`HTTP ${res.status} ${t}`.slice(0,160));
+      if (filtered.length){
+        setTrack(0);
+        hint.textContent = "Tap Play atau klik judul";
+      } else {
+        hint.textContent = "Tambahkan lagu lewat CLI";
       }
-      const out = await res.json().catch(()=> ({}));
-      toast("Upload", `Sukses: ${out.added?.title || file.name}`, "ok");
-      await loadPlaylist();
     }catch(e){
+      listEl.innerHTML = `<div class="empty">Gagal load playlist. Pastikan <code>/playlist.json</code> ada.</div>`;
       console.error(e);
-      toast("Upload gagal", String(e.message || e).slice(0,140), "bad");
     }
   }
 
-  // ========= EVENTS =========
-  btnPlay.onclick = () => audio.play().catch(()=>{});
+  // controls
+  btnPlay.onclick = () => audio.play();
   btnPause.onclick = () => audio.pause();
-  btnPrev.onclick = prevTrack;
-  btnNext.onclick = nextTrack;
-
-  btnShuffle.onclick = () => { isShuffle = !isShuffle; updateTogglesUI(); };
-  btnRepeat.onclick  = () => { isRepeat  = !isRepeat;  updateTogglesUI(); };
-
-  btnReload.onclick = loadPlaylist;
-
-  btnSort.onclick = () => {
-    sortAsc = !sortAsc;
-    applyFilter();
-    toast("Sort", sortAsc ? "A → Z" : "Z → A", "ok");
-  };
+  btnPrev.onclick = () => { setTrack(idx - 1); audio.play(); };
+  btnNext.onclick = () => { setTrack(idx + 1); audio.play(); };
 
   vol.addEventListener("input", () => audio.volume = Number(vol.value));
 
   audio.addEventListener("play", () => setStatus("Playing"));
   audio.addEventListener("pause", () => setStatus("Paused"));
-  audio.addEventListener("ended", nextTrack);
+  audio.addEventListener("ended", () => { setTrack(idx + 1); audio.play(); });
 
-  audio.addEventListener("loadedmetadata", () => { durPill.textContent = fmt(audio.duration || 0); });
+  audio.addEventListener("loadedmetadata", () => {
+    durPill.textContent = fmt(audio.duration || 0);
+  });
 
   audio.addEventListener("timeupdate", () => {
     const cur = audio.currentTime || 0;
     const dur = audio.duration || 0;
-    seek.value = String(dur ? Math.floor((cur/dur) * 1000) : 0);
+    const v = dur ? Math.floor((cur/dur) * 1000) : 0;
+    seek.value = String(v);
     timeEl.textContent = `${fmt(cur)} / ${fmt(dur)}`;
   });
 
@@ -854,104 +631,7 @@
 
   qEl.addEventListener("input", applyFilter);
 
-  // Upload UI
-  btnUpload.onclick = () => filePick.click();
-  filePick.addEventListener("change", (e) => {
-    const file = e.target.files?.[0];
-    if (file) uploadFromUI(file);
-    e.target.value = "";
-  });
-
-  // Keyboard shortcuts (di luar input)
-  window.addEventListener("keydown", (e) => {
-    const tag = (document.activeElement?.tagName || "").toLowerCase();
-    if (tag === "input" || tag === "textarea") return;
-
-    if (e.code === "Space"){ e.preventDefault(); audio.paused ? audio.play().catch(()=>{}) : audio.pause(); }
-    if (e.key === "ArrowRight"){ audio.currentTime = Math.min((audio.currentTime||0) + 5, audio.duration||Infinity); }
-    if (e.key === "ArrowLeft"){ audio.currentTime = Math.max((audio.currentTime||0) - 5, 0); }
-    if (e.key === "ArrowUp"){ e.preventDefault(); audio.volume = Math.min(1, (audio.volume||0) + 0.05); vol.value = String(audio.volume); }
-    if (e.key === "ArrowDown"){ e.preventDefault(); audio.volume = Math.max(0, (audio.volume||0) - 0.05); vol.value = String(audio.volume); }
-    if (e.key.toLowerCase() === "k") nextTrack();
-    if (e.key.toLowerCase() === "j") prevTrack();
-  });
-
-  // Persist API base locally
-  const LS_BASE = "mp3_api_base";
-  const LS_KEY  = "mp3_api_key";
-  apiBaseEl.value = localStorage.getItem(LS_BASE) || DEFAULT_API_BASE;
-  apiKeyEl.value  = localStorage.getItem(LS_KEY) || "";
-
-  apiBaseEl.addEventListener("change", () => {
-    localStorage.setItem(LS_BASE, apiBaseEl.value.trim());
-    loadPlaylist();
-  });
-  apiKeyEl.addEventListener("change", () => {
-    localStorage.setItem(LS_KEY, apiKeyEl.value);
-    toast("API Key", "Tersimpan di browser (localStorage). Jangan dipakai kalau ini web publik.", "warn");
-  });
-
-  // ========= Visualizer =========
-  const canvas = document.getElementById("viz");
-  const ctx = canvas.getContext("2d");
-  let actx, analyser, srcNode, dataArr, raf;
-
-  function setupViz(){
-    if (actx) return;
-    try{
-      actx = new (window.AudioContext || window.webkitAudioContext)();
-      analyser = actx.createAnalyser();
-      analyser.fftSize = 256;
-      dataArr = new Uint8Array(analyser.frequencyBinCount);
-
-      srcNode = actx.createMediaElementSource(audio);
-      srcNode.connect(analyser);
-      analyser.connect(actx.destination);
-
-      draw();
-    }catch(e){
-      console.warn("Visualizer disabled:", e);
-    }
-  }
-
-  function draw(){
-    raf = requestAnimationFrame(draw);
-    if (!analyser) return;
-
-    analyser.getByteFrequencyData(dataArr);
-
-    const w = canvas.width, h = canvas.height;
-    ctx.clearRect(0,0,w,h);
-
-    // background subtle
-    ctx.globalAlpha = 1;
-    ctx.fillStyle = "rgba(255,255,255,.02)";
-    ctx.fillRect(0,0,w,h);
-
-    const bars = dataArr.length;
-    const gap = 2;
-    const bw = (w - gap * (bars - 1)) / bars;
-
-    for (let i=0; i<bars; i++){
-      const v = dataArr[i] / 255;
-      const bh = Math.max(4, v * (h - 10));
-      const x = i * (bw + gap);
-      const y = h - bh;
-
-      // default fill (no explicit colors requested by user? This is canvas fill, still fine)
-      ctx.fillStyle = "rgba(255,255,255,.22)";
-      ctx.fillRect(x, y, bw, bh);
-    }
-  }
-
-  audio.addEventListener("play", async () => {
-    setupViz();
-    if (actx?.state === "suspended") await actx.resume().catch(()=>{});
-  });
-
-  // ========= INIT =========
-  updateTogglesUI();
   loadPlaylist();
 </script>
 </body>
-</html>
+                                                                  </html>
